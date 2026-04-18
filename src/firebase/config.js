@@ -3,13 +3,13 @@ import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
-    apiKey: "AIzaSyBzh1YiZkIvqKDOhGSSXogPL0ooMiiMs58",
-    authDomain: "sacco-app-aac60.firebaseapp.com",
-    projectId: "sacco-app-aac60",
-    storageBucket: "sacco-app-aac60.firebasestorage.app",
-    messagingSenderId: "610913772844",
-    appId: "1:610913772844:web:9b0144ea935cce9681b889",
-    measurementId: "G-JVKPWEEVYY"
+    apiKey: "AIzaSyCA1iwJ6kxHI5LwN6OIZ4iBhX3ykmYdzpk",
+    authDomain: "sacco-app-1c4c4.firebaseapp.com",
+    projectId: "sacco-app-1c4c4",
+    storageBucket: "sacco-app-1c4c4.firebasestorage.app",
+    messagingSenderId: "578980827252",
+    appId: "1:578980827252:web:224811cf2897a55bdd8121",
+    measurementId: "G-B5S8P9Z7WE"
 };
 
 const app = initializeApp(firebaseConfig);
