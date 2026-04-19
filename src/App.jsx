@@ -57,9 +57,11 @@ function App() {
       const loggedInUser = result.user;
 
       await setDoc(doc(db, "users", String(loggedInUser.uid)), {
-        name: loggedInUser.displayName,
-        email: loggedInUser.email,
+        name: loggedInUser.displayName || "",
+        email: loggedInUser.email || "",
+        photo: loggedInUser.photoURL || "",
         uid: loggedInUser.uid,
+        createdAt: new Date().toISOString(),
       });
 
       setUser(loggedInUser);
