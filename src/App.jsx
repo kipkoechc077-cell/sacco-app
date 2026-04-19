@@ -8,6 +8,8 @@ import {
   getDocs,
   addDoc,
   deleteDoc,
+  query,
+  where,
 } from "firebase/firestore";
 import {
   BarChart,
@@ -27,28 +29,48 @@ function App() {
   const [memberEmail, setMemberEmail] = useState("");
   const [members, setMembers] = useState([]);
 
-  const fetchMembers = async () => {
-    const querySnapshot = await getDocs(collection(db, "members"));
+  const fetchMembers = async (currentUser = user) => {
+    if (!currentUser) return;
+
+    const q = query(
+        collection(db, "members"),
+        where("ownerId", "==", currentUser.uid)
+    );
+
+    const querySnapshot = await getDocs(q);
     const membersList = querySnapshot.docs.map((doc) => ({
       id: doc.id,
       ...doc.data(),
     }));
     setMembers(membersList);
   };
+  const fetchContributions = async (currentUser = user) => {
+    if (!currentUser) return;
 
-  const fetchContributions = async () => {
-    const querySnapshot = await getDocs(collection(db, "contributions"));
+    const q = query(
+        collection(db, "contributions"),
+        where("ownerId", "==", currentUser.uid)
+    );
+
+    const querySnapshot = await getDocs(q);
+
     const contributionsList = querySnapshot.docs.map((doc) => ({
       id: doc.id,
       ...doc.data(),
     }));
+
     setContributions(contributionsList);
   };
 
   useEffect(() => {
-    fetchMembers();
-    fetchContributions();
-  }, []);
+    if (user) {
+      fetchMembers(user);
+      fetchContributions(user);
+    } else {
+      setMembers([]);
+      setContributions([]);
+    }
+  }, [user]);
 
   const login = async () => {
     try {
@@ -65,6 +87,8 @@ function App() {
       });
 
       setUser(loggedInUser);
+      await fetchMembers(loggedInUser);
+      await fetchContributions(loggedInUser);
     } catch (error) {
       console.error("Login error:", error);
       alert(error.message);
@@ -86,13 +110,14 @@ function App() {
       await setDoc(doc(db, "members", Date.now().toString()), {
         name: memberName,
         email: memberEmail,
+        ownerId: user.uid,
         createdAt: new Date().toISOString(),
       });
 
       alert("Member added!");
       setMemberName("");
       setMemberEmail("");
-      fetchMembers();
+      fetchMembers(user);
     } catch (error) {
       console.error("Error adding member:", error);
       alert(error.message);
@@ -109,13 +134,14 @@ function App() {
       await addDoc(collection(db, "contributions"), {
         memberName: selectedMember,
         amount: Number(amount),
+        ownerId: user.uid,
         createdAt: new Date().toISOString(),
       });
 
       alert("Contribution saved!");
       setSelectedMember("");
       setAmount("");
-      fetchContributions();
+      fetchContributions(user);
     } catch (error) {
       console.error("Error adding contribution:", error);
       alert(error.message);
